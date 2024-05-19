@@ -96,6 +96,13 @@ export async function getProductsByCategory(categoryName) {
 }
 
 export async function getAllProducts() {
+  // check if products are already in local storage
+  const localProducts = localStorage.getItem("products");
+  if (localProducts.length > 0) {
+    console.log("returning from local storage");
+    return JSON.parse(localProducts);
+  }
+
   const q = query(collection(db, "products"));
   const querySnapshot = await getDocs(q);
 
@@ -103,6 +110,8 @@ export async function getAllProducts() {
   querySnapshot.forEach((doc) => {
     products.push({ id: doc.id, ...doc.data() });
   });
+
+  localStorage.setItem("products", JSON.stringify(products));
 
   return products;
 }
